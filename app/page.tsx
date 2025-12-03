@@ -5,6 +5,13 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ArrowRight, Loader2 } from 'lucide-react'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 
 // Token configuration
 const TOKENS = [
@@ -22,9 +29,9 @@ interface TokenData {
 }
 
 export default function TokenPriceExplorer() {
-  // Fixed tokens: USDC -> ETH
-  const selectedSourceToken = 'USDC'
-  const selectedTargetToken = 'ETH'
+  // Customizable tokens with defaults: USDC -> ETH
+  const [selectedSourceToken, setSelectedSourceToken] = useState<string>('USDC')
+  const [selectedTargetToken, setSelectedTargetToken] = useState<string>('ETH')
 
   const [sourceAmount, setSourceAmount] = useState<string>('')
   const [targetAmount, setTargetAmount] = useState<string>('0')
@@ -33,12 +40,17 @@ export default function TokenPriceExplorer() {
 
   const [tokenData, setTokenData] = useState<Record<string, TokenData>>({})
 
-  // Fetch token prices dynamically when source amount changes
+  // Get available tokens for each dropdown (excluding the other selected token)
+  const availableSourceTokens = TOKENS.filter(t => t.symbol !== selectedTargetToken)
+  const availableTargetTokens = TOKENS.filter(t => t.symbol !== selectedSourceToken)
+
+  // Fetch token prices dynamically when source amount or tokens change
   useEffect(() => {
     const fetchTokenPrices = async () => {
       // Only fetch if user has entered an amount
       if (!sourceAmount || parseFloat(sourceAmount) <= 0) {
         setTargetAmount('0')
+        setTokenData({})
         return
       }
 
@@ -113,28 +125,17 @@ export default function TokenPriceExplorer() {
               Token Price Explorer
             </h1>
 
-            {/* Fixed Swap Direction */}
-            <div className="text-center mb-8">
-              <p className="text-lg text-muted-foreground">
-                Swap <span className="font-bold text-blue-600">{selectedSourceToken}</span> → <span className="font-bold text-purple-600">{selectedTargetToken}</span>
-              </p>
-            </div>
-
-            {/* Source Amount Input */}
-            <div className="mb-6">
-              <Label htmlFor="source-amount" className="text-sm font-medium mb-2 block">
-                {selectedSourceToken} Amount
-              </Label>
-              <Input
-                id="source-amount"
-                type="number"
-                value={sourceAmount}
-                onChange={(e) => setSourceAmount(e.target.value)}
-                placeholder={`Enter ${selectedSourceToken} amount`}
-                className="text-lg"
-                min="0"
-                step="0.01"
-              />
+            {/* Available Tokens Display */}
+            <div className="flex flex-wrap justify-center gap-3 mb-8">
+              {TOKENS.map((token) => (
+                <Card key={token.symbol} className="border">
+                  <CardContent className="px-1 px-4">
+                    <div className="flex flex-col items-center gap-1">
+                      <p className="font-bold text-sm">{token.symbol}</p>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
 
             {/* Error Display */}
@@ -145,24 +146,57 @@ export default function TokenPriceExplorer() {
             )}
 
             {/* Token Comparison Cards */}
-            {/* Token Comparison Cards */}
             <div className="flex flex-col md:flex-row gap-4 items-center overflow-x-auto">
               {/* Source Token Card */}
               <Card className="w-full md:flex-1 border-2 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
                 <CardContent className="p-6">
                   <div className="space-y-4">
+                    {/* Token Selector */}
                     <div>
-                      <Label className="text-xs font-medium text-muted-foreground mb-1 block">
+                      <Label htmlFor="source-token" className="text-xs font-medium text-muted-foreground mb-2 block">
                         From
                       </Label>
-                      <div className="w-full text-xl font-bold">
-                        {selectedSourceToken}
-                      </div>
+                      <Select
+                        value={selectedSourceToken}
+                        onValueChange={setSelectedSourceToken}
+                      >
+                        <SelectTrigger id="source-token" className="w-full h-12 text-base font-semibold">
+                          <SelectValue placeholder="Select token" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableSourceTokens.map((token) => (
+                            <SelectItem key={token.symbol} value={token.symbol}>
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold">{token.symbol}</span>
+                                <span className="text-muted-foreground text-sm">- {token.name}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
 
+                    {/* Amount Input */}
+                    <div>
+                      <Label htmlFor="source-amount" className="text-xs font-medium text-muted-foreground mb-2 block">
+                        Amount
+                      </Label>
+                      <Input
+                        id="source-amount"
+                        type="number"
+                        value={sourceAmount}
+                        onChange={(e) => setSourceAmount(e.target.value)}
+                        placeholder={`Enter ${selectedSourceToken} amount`}
+                        className="text-xl font-bold h-12"
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+
+                    {/* Price Display */}
                     <div>
                       <Label className="text-xs font-medium text-muted-foreground mb-1 block">
-                        Amount
+                        Price per {selectedSourceToken}
                       </Label>
                       {loading ? (
                         <div className="flex items-center gap-2 text-muted-foreground">
@@ -170,19 +204,10 @@ export default function TokenPriceExplorer() {
                           <span className="text-sm">Loading...</span>
                         </div>
                       ) : (
-                        <p className="text-2xl font-bold break-all">
-                          {sourceAmount}
+                        <p className="text-sm text-muted-foreground font-medium">
+                          ${tokenData[selectedSourceToken]?.price.toFixed(4) || '—'}
                         </p>
                       )}
-                    </div>
-
-                    <div>
-                      <Label className="text-xs font-medium text-muted-foreground mb-1 block">
-                        Price
-                      </Label>
-                      <p className="text-sm text-muted-foreground">
-                        ${tokenData[selectedSourceToken]?.price.toFixed(4) || '—'}
-                      </p>
                     </div>
                   </div>
                 </CardContent>
@@ -197,18 +222,54 @@ export default function TokenPriceExplorer() {
               <Card className="w-full md:flex-1 border-2 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900">
                 <CardContent className="p-6">
                   <div className="space-y-4">
+                    {/* Token Selector */}
                     <div>
-                      <Label className="text-xs font-medium text-muted-foreground mb-1 block">
+                      <Label htmlFor="target-token" className="text-xs font-medium text-muted-foreground mb-2 block">
                         To
                       </Label>
-                      <div className="w-full text-xl font-bold">
-                        {selectedTargetToken}
-                      </div>
+                      <Select
+                        value={selectedTargetToken}
+                        onValueChange={setSelectedTargetToken}
+                      >
+                        <SelectTrigger id="target-token" className="w-full h-12 text-base font-semibold">
+                          <SelectValue placeholder="Select token" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableTargetTokens.map((token) => (
+                            <SelectItem key={token.symbol} value={token.symbol}>
+                              <div className="flex items-center gap-2">
+                                <span className="font-semibold">{token.symbol}</span>
+                                <span className="text-muted-foreground text-sm">- {token.name}</span>
+                              </div>
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
 
+                    {/* Amount Display (Read-only) */}
+                    <div>
+                      <Label className="text-xs font-medium text-muted-foreground mb-2 block">
+                        You Receive
+                      </Label>
+                      {loading ? (
+                        <div className="flex items-center gap-2 h-12">
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                          <span className="text-sm">Calculating...</span>
+                        </div>
+                      ) : (
+                        <div className="h-12 flex items-center px-3 bg-background/50 rounded-md border">
+                          <p className="text-xl font-bold break-all">
+                            {targetAmount}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Price Display */}
                     <div>
                       <Label className="text-xs font-medium text-muted-foreground mb-1 block">
-                        Amount
+                        Price per {selectedTargetToken}
                       </Label>
                       {loading ? (
                         <div className="flex items-center gap-2 text-muted-foreground">
@@ -216,19 +277,10 @@ export default function TokenPriceExplorer() {
                           <span className="text-sm">Loading...</span>
                         </div>
                       ) : (
-                        <p className="text-2xl font-bold break-all">
-                          {targetAmount}
+                        <p className="text-sm text-muted-foreground font-medium">
+                          ${tokenData[selectedTargetToken]?.price.toFixed(4) || '—'}
                         </p>
                       )}
-                    </div>
-
-                    <div>
-                      <Label className="text-xs font-medium text-muted-foreground mb-1 block">
-                        Price
-                      </Label>
-                      <p className="text-sm text-muted-foreground">
-                        ${tokenData[selectedTargetToken]?.price.toFixed(4) || '—'}
-                      </p>
                     </div>
                   </div>
                 </CardContent>
