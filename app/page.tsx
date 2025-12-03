@@ -1,9 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { ArrowRight, Loader2 } from 'lucide-react'
 
@@ -23,104 +22,86 @@ interface TokenData {
 }
 
 export default function TokenPriceExplorer() {
-  const [selectedSourceToken, setSelectedSourceToken] = useState<string>('USDC')
-  const [selectedTargetToken, setSelectedTargetToken] = useState<string>('ETH')
-  const [usdAmount, setUsdAmount] = useState<string>('100')
+  // Fixed tokens: USDC -> ETH
+  const selectedSourceToken = 'USDC'
+  const selectedTargetToken = 'ETH'
+
+  const [sourceAmount, setSourceAmount] = useState<string>('')
+  const [targetAmount, setTargetAmount] = useState<string>('0')
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
 
   const [tokenData, setTokenData] = useState<Record<string, TokenData>>({})
-  const [sourceAmount, setSourceAmount] = useState<string>('0')
-  const [targetAmount, setTargetAmount] = useState<string>('0')
 
-  // // Fetch token data on mount and when tokens change
-  // useEffect(() => {
-  //   fetchTokenData()
-  // }, [selectedSourceToken, selectedTargetToken])
+  // Fetch token prices dynamically when source amount changes
+  useEffect(() => {
+    const fetchTokenPrices = async () => {
+      // Only fetch if user has entered an amount
+      if (!sourceAmount || parseFloat(sourceAmount) <= 0) {
+        setTargetAmount('0')
+        return
+      }
 
-  // // Calculate amounts when USD amount changes
-  // useEffect(() => {
-  //   calculateAmounts()
-  // }, [usdAmount, tokenData])
+      setLoading(true)
+      setError('')
 
-  // const fetchTokenData = async () => {
-  //   setLoading(true)
-  //   setError('')
+      try {
+        const sourceToken = TOKENS.find(t => t.symbol === selectedSourceToken)
+        const targetToken = TOKENS.find(t => t.symbol === selectedTargetToken)
 
-  //   try {
-  //     const tokens = [selectedSourceToken, selectedTargetToken]
-  //     const uniqueTokens = [...new Set(tokens)]
+        if (!sourceToken || !targetToken) {
+          throw new Error('Token configuration not found')
+        }
 
-  //     for (const symbol of uniqueTokens) {
-  //       const tokenConfig = TOKENS.find(t => t.symbol === symbol)
-  //       if (!tokenConfig) continue
+        // Fetch source token (USDC) data
+        const sourceResponse = await fetch(`/api/token-price?symbol=${selectedSourceToken}&chainId=${sourceToken.chainId}`)
+        if (!sourceResponse.ok) throw new Error('Failed to fetch source token data')
+        const sourceData = await sourceResponse.json()
 
-  //       // Get token info
-  //       const tokenInfo = await getAssetErc20ByChainAndSymbol({
-  //         chainId: tokenConfig.chainId,
-  //         symbol: symbol,
-  //         apiKey: API_KEY,
-  //       })
+        // Fetch target token (ETH) data
+        const targetResponse = await fetch(`/api/token-price?symbol=${selectedTargetToken}&chainId=${targetToken.chainId}`)
+        if (!targetResponse.ok) throw new Error('Failed to fetch target token data')
+        const targetData = await targetResponse.json()
 
-  //       if (tokenInfo && tokenInfo.address) {
-  //         // Get price info
-  //         const priceInfo = await getAssetPriceInfo({
-  //           chainId: tokenConfig.chainId,
-  //           assetTokenAddress: tokenInfo.address,
-  //           apiKey: API_KEY,
-  //         })
+        // Update token data
+        const newTokenData = {
+          [selectedSourceToken]: {
+            symbol: selectedSourceToken,
+            chainId: sourceToken.chainId,
+            address: sourceData.tokenInfo.address,
+            price: sourceData.tokenPrice.unitPrice,
+          },
+          [selectedTargetToken]: {
+            symbol: selectedTargetToken,
+            chainId: targetToken.chainId,
+            address: targetData.tokenInfo.address,
+            price: targetData.tokenPrice.unitPrice,
+          },
+        }
+        setTokenData(newTokenData)
 
-  //         setTokenData(prev => ({
-  //           ...prev,
-  //           [symbol]: {
-  //             symbol,
-  //             chainId: tokenConfig.chainId,
-  //             address: tokenInfo.address,
-  //             price: priceInfo?.price || 0,
-  //           },
-  //         }))
-  //       }
-  //     }
-  //   } catch (err) {
-  //     setError('Failed to fetch token data. Please try again.')
-  //     console.error('Error fetching token data:', err)
-  //   } finally {
-  //     setLoading(false)
-  //   }
-  // }
+        // Calculate target amount
+        const sourceAmountNum = parseFloat(sourceAmount)
+        const sourceValueInUSD = sourceAmountNum * sourceData.tokenPrice.unitPrice
+        const targetAmountNum = sourceValueInUSD / targetData.tokenPrice.unitPrice
+        setTargetAmount(targetAmountNum.toFixed(6))
 
-  // const calculateAmounts = () => {
-  //   const usd = parseFloat(usdAmount) || 0
+      } catch (err) {
+        setError('Failed to fetch token prices. Please try again.')
+        console.error('Error fetching token data:', err)
+        setTargetAmount('0')
+      } finally {
+        setLoading(false)
+      }
+    }
 
-  //   const sourceToken = tokenData[selectedSourceToken]
-  //   const targetToken = tokenData[selectedTargetToken]
+    // Debounce the API call (1s)
+    const timeoutId = setTimeout(() => {
+      fetchTokenPrices()
+    }, 1000)
 
-  //   if (sourceToken?.price) {
-  //     const sourceQty = usd / sourceToken.price
-  //     setSourceAmount(sourceQty.toFixed(6))
-  //   }
-
-  //   if (targetToken?.price) {
-  //     const targetQty = usd / targetToken.price
-  //     setTargetAmount(targetQty.toFixed(6))
-  //   }
-  // }
-
-  // const handleTokenSelect = (token: string, type: 'source' | 'target') => {
-  //   if (type === 'source') {
-  //     if (token === selectedTargetToken) {
-  //       // Swap if selecting the same token
-  //       setSelectedTargetToken(selectedSourceToken)
-  //     }
-  //     setSelectedSourceToken(token)
-  //   } else {
-  //     if (token === selectedSourceToken) {
-  //       // Swap if selecting the same token
-  //       setSelectedSourceToken(selectedTargetToken)
-  //     }
-  //     setSelectedTargetToken(token)
-  //   }
-  // }
+    return () => clearTimeout(timeoutId)
+  }, [sourceAmount, selectedSourceToken, selectedTargetToken])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 md:p-8">
@@ -132,40 +113,24 @@ export default function TokenPriceExplorer() {
               Token Price Explorer
             </h1>
 
-            {/* Token Selection Buttons */}
-            <div className="flex flex-wrap justify-center gap-2 mb-8">
-              {TOKENS.map((token) => (
-                <Button
-                  key={token.symbol}
-                  variant={
-                    selectedSourceToken === token.symbol || selectedTargetToken === token.symbol
-                      ? 'default'
-                      : 'outline'
-                  }
-                  className="min-w-[80px] font-semibold"
-                // onClick={() => {
-                //   // Smart selection: prioritize source token
-                //   if (selectedSourceToken !== token.symbol && selectedTargetToken !== token.symbol) {
-                //     handleTokenSelect(token.symbol, 'source')
-                //   }
-                // }}
-                >
-                  {token.symbol}
-                </Button>
-              ))}
+            {/* Fixed Swap Direction */}
+            <div className="text-center mb-8">
+              <p className="text-lg text-muted-foreground">
+                Swap <span className="font-bold text-blue-600">{selectedSourceToken}</span> → <span className="font-bold text-purple-600">{selectedTargetToken}</span>
+              </p>
             </div>
 
-            {/* USD Input */}
+            {/* Source Amount Input */}
             <div className="mb-6">
-              <Label htmlFor="usd-amount" className="text-sm font-medium mb-2 block">
-                USD Amount
+              <Label htmlFor="source-amount" className="text-sm font-medium mb-2 block">
+                {selectedSourceToken} Amount
               </Label>
               <Input
-                id="usd-amount"
+                id="source-amount"
                 type="number"
-                value={usdAmount}
-                onChange={(e) => setUsdAmount(e.target.value)}
-                placeholder="Enter USD amount"
+                value={sourceAmount}
+                onChange={(e) => setSourceAmount(e.target.value)}
+                placeholder={`Enter ${selectedSourceToken} amount`}
                 className="text-lg"
                 min="0"
                 step="0.01"
@@ -190,17 +155,9 @@ export default function TokenPriceExplorer() {
                       <Label className="text-xs font-medium text-muted-foreground mb-1 block">
                         From
                       </Label>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-xl font-bold p-0 h-auto hover:bg-transparent"
-                      // onClick={() => {
-                      //   const currentIndex = TOKENS.findIndex(t => t.symbol === selectedSourceToken)
-                      //   const nextIndex = (currentIndex + 1) % TOKENS.length
-                      //   handleTokenSelect(TOKENS[nextIndex].symbol, 'source')
-                      // }}
-                      >
+                      <div className="w-full text-xl font-bold">
                         {selectedSourceToken}
-                      </Button>
+                      </div>
                     </div>
 
                     <div>
@@ -244,17 +201,9 @@ export default function TokenPriceExplorer() {
                       <Label className="text-xs font-medium text-muted-foreground mb-1 block">
                         To
                       </Label>
-                      <Button
-                        variant="ghost"
-                        className="w-full justify-start text-xl font-bold p-0 h-auto hover:bg-transparent"
-                      // onClick={() => {
-                      //   const currentIndex = TOKENS.findIndex(t => t.symbol === selectedTargetToken)
-                      //   const nextIndex = (currentIndex + 1) % TOKENS.length
-                      //   handleTokenSelect(TOKENS[nextIndex].symbol, 'target')
-                      // }}
-                      >
+                      <div className="w-full text-xl font-bold">
                         {selectedTargetToken}
-                      </Button>
+                      </div>
                     </div>
 
                     <div>

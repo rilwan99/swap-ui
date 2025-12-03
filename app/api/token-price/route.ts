@@ -24,6 +24,7 @@ export async function GET(request: Request) {
 
     return Response.json({ tokenInfo, tokenPrice });
   } catch (error) {
+    console.error("Error fetching token data:", error);
     return Response.json(
       { error: "Failed to get asset details" },
       { status: 500 }
