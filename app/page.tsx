@@ -15,10 +15,30 @@ import {
 
 // Token configuration
 const TOKENS = [
-  { symbol: 'USDC', chainId: '1', name: 'USD Coin' },
-  { symbol: 'USDT', chainId: '137', name: 'Tether' },
-  { symbol: 'ETH', chainId: '8453', name: 'Ethereum' },
-  { symbol: 'WBTC', chainId: '1', name: 'Wrapped Bitcoin' },
+  {
+    symbol: 'USDC',
+    chainId: '1',
+    name: 'USD Coin',
+    image: 'https://wsrv.nl/?w=24&h=24&url=https%3A%2F%2Fraw.githubusercontent.com%2Fsolana-labs%2Ftoken-list%2Fmain%2Fassets%2Fmainnet%2FEPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v%2Flogo.png&dpr=2&quality=80'
+  },
+  {
+    symbol: 'USDT',
+    chainId: '137',
+    name: 'Tether',
+    image: 'https://wsrv.nl/?w=24&h=24&url=https%3A%2F%2Fraw.githubusercontent.com%2Fsolana-labs%2Ftoken-list%2Fmain%2Fassets%2Fmainnet%2FEs9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB%2Flogo.svg&dpr=2&quality=80'
+  },
+  {
+    symbol: 'ETH',
+    chainId: '8453',
+    name: 'Ethereum',
+    image: 'https://wsrv.nl/?w=24&h=24&url=https%3A%2F%2Fraw.githubusercontent.com%2Fsolana-labs%2Ftoken-list%2Fmain%2Fassets%2Fmainnet%2F7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs%2Flogo.png&dpr=2&quality=80'
+  },
+  {
+    symbol: 'WBTC',
+    chainId: '1',
+    name: 'Wrapped Bitcoin',
+    image: 'https://wsrv.nl/?w=24&h=24&url=https%3A%2F%2Fraw.githubusercontent.com%2Fsolana-labs%2Ftoken-list%2Fmain%2Fassets%2Fmainnet%2F3NZ9JMVBmGAqocybic2c7LQCJScmgsAZ6vQqTDzcqmJh%2Flogo.png&dpr=2&quality=80'
+  },
 ]
 
 interface TokenData {
@@ -135,7 +155,12 @@ export default function TokenPriceExplorer() {
               {TOKENS.map((token) => (
                 <Card key={token.symbol} className="border">
                   <CardContent className="px-1 px-4">
-                    <div className="flex flex-col items-center gap-1">
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={token.image}
+                        alt={token.symbol}
+                        className="w-6 h-6 rounded-full"
+                      />
                       <p className="font-bold text-sm">{token.symbol}</p>
                     </div>
                   </CardContent>
@@ -173,43 +198,43 @@ export default function TokenPriceExplorer() {
                       />
                     </div>
 
-                    {/* Token Selector */}
+                    {/* Token Amount Display with Integrated Selector */}
                     <div>
                       <Label htmlFor="source-token" className="text-xs font-medium text-muted-foreground mb-2 block">
                         From
                       </Label>
-                      <Select
-                        value={selectedSourceToken}
-                        onValueChange={setSelectedSourceToken}
-                      >
-                        <SelectTrigger id="source-token" className="w-full h-12 text-base font-semibold">
-                          <SelectValue placeholder="Select token" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableSourceTokens.map((token) => (
-                            <SelectItem key={token.symbol} value={token.symbol}>
-                              <div className="flex items-center gap-2">
-                                <span className="font-semibold">{token.symbol}</span>
-                                <span className="text-muted-foreground text-sm">- {token.name}</span>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Token Amount Display */}
-                    <div>
                       {loading ? (
                         <div className="flex items-center gap-2 h-12">
                           <Loader2 className="h-5 w-5 animate-spin" />
                           <span className="text-sm">Calculating...</span>
                         </div>
                       ) : (
-                        <div className="h-12 flex items-center px-3 bg-background/50 rounded-md border">
-                          <p className="text-xl font-bold break-all">
+                        <div className="h-12 flex items-center justify-between px-3 bg-background/50 rounded-md border gap-2">
+                          <p className="text-xl font-bold break-all flex-1">
                             {sourceAmount}
                           </p>
+                          <Select
+                            value={selectedSourceToken}
+                            onValueChange={setSelectedSourceToken}
+                          >
+                            <SelectTrigger id="source-token" className="w-[120px] h-8 text-sm font-semibold border-0 bg-background shadow-sm">
+                              <SelectValue placeholder="Select token" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {availableSourceTokens.map((token) => (
+                                <SelectItem key={token.symbol} value={token.symbol}>
+                                  <div className="flex items-center gap-2">
+                                    <img
+                                      src={token.image}
+                                      alt={token.symbol}
+                                      className="w-4 h-4 rounded-full"
+                                    />
+                                    <span className="font-semibold">{token.symbol}</span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       )}
                     </div>
@@ -240,43 +265,43 @@ export default function TokenPriceExplorer() {
               <Card className="w-full md:flex-1 border-2 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900">
                 <CardContent className="p-6">
                   <div className="space-y-4">
-                    {/* Token Selector */}
+                    {/* Token Amount Display with Integrated Selector */}
                     <div>
                       <Label htmlFor="target-token" className="text-xs font-medium text-muted-foreground mb-2 block">
                         To
                       </Label>
-                      <Select
-                        value={selectedTargetToken}
-                        onValueChange={setSelectedTargetToken}
-                      >
-                        <SelectTrigger id="target-token" className="w-full h-12 text-base font-semibold">
-                          <SelectValue placeholder="Select token" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {availableTargetTokens.map((token) => (
-                            <SelectItem key={token.symbol} value={token.symbol}>
-                              <div className="flex items-center gap-2">
-                                <span className="font-semibold">{token.symbol}</span>
-                                <span className="text-muted-foreground text-sm">- {token.name}</span>
-                              </div>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Amount Display (Read-only) */}
-                    <div>
                       {loading ? (
                         <div className="flex items-center gap-2 h-12">
                           <Loader2 className="h-5 w-5 animate-spin" />
                           <span className="text-sm">Calculating...</span>
                         </div>
                       ) : (
-                        <div className="h-12 flex items-center px-3 bg-background/50 rounded-md border">
-                          <p className="text-xl font-bold break-all">
+                        <div className="h-12 flex items-center justify-between px-3 bg-background/50 rounded-md border gap-2">
+                          <p className="text-xl font-bold break-all flex-1">
                             {targetAmount}
                           </p>
+                          <Select
+                            value={selectedTargetToken}
+                            onValueChange={setSelectedTargetToken}
+                          >
+                            <SelectTrigger id="target-token" className="w-[120px] h-8 text-sm font-semibold border-0 bg-background shadow-sm">
+                              <SelectValue placeholder="Select token" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {availableTargetTokens.map((token) => (
+                                <SelectItem key={token.symbol} value={token.symbol}>
+                                  <div className="flex items-center gap-2">
+                                    <img
+                                      src={token.image}
+                                      alt={token.symbol}
+                                      className="w-4 h-4 rounded-full"
+                                    />
+                                    <span className="font-semibold">{token.symbol}</span>
+                                  </div>
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                       )}
                     </div>
