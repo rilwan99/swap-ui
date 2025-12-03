@@ -143,23 +143,6 @@ export default function TokenPriceExplorer() {
               ))}
             </div>
 
-            {/* USD Amount Input */}
-            <div className="mb-8">
-              <Label htmlFor="usd-amount" className="text-sm font-medium mb-2 block">
-                Enter USD Amount
-              </Label>
-              <Input
-                id="usd-amount"
-                type="number"
-                value={usdAmount}
-                onChange={(e) => setUsdAmount(e.target.value)}
-                placeholder="Enter USD amount"
-                className="text-lg h-14"
-                min="0"
-                step="0.01"
-              />
-            </div>
-
             {/* Error Display */}
             {error && (
               <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
@@ -198,22 +181,37 @@ export default function TokenPriceExplorer() {
                       </Select>
                     </div>
 
-                    {/* Amount Display */}
+                    {/* USD Amount Input */}
+                    <div>
+                      <Label htmlFor="usd-amount" className="text-xs font-medium text-muted-foreground mb-2 block">
+                        Enter USD Amount
+                      </Label>
+                      <Input
+                        id="usd-amount"
+                        type="number"
+                        value={usdAmount}
+                        onChange={(e) => setUsdAmount(e.target.value)}
+                        placeholder="Enter USD amount"
+                        className="h-12"
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+
+                    {/* Token Amount Display */}
                     <div>
                       <Label className="text-xs font-medium text-muted-foreground mb-2 block">
-                        Amount
+                        {selectedSourceToken} Amount
                       </Label>
                       {loading ? (
-                        <div className="flex items-center gap-2 h-12">
-                          <Loader2 className="h-5 w-5 animate-spin" />
-                          <span className="text-sm">Calculating...</span>
+                        <div className="flex items-center gap-2">
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          <span className="text-xs">Calculating...</span>
                         </div>
                       ) : (
-                        <div className="h-12 flex items-center px-3 bg-background/50 rounded-md border">
-                          <p className="text-xl font-bold break-all">
-                            {sourceAmount}
-                          </p>
-                        </div>
+                        <p className="text-sm font-semibold text-muted-foreground">
+                          {sourceAmount} {selectedSourceToken}
+                        </p>
                       )}
                     </div>
 
