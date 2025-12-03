@@ -58,7 +58,7 @@ export default function TokenPriceExplorer() {
             <ErrorDisplay error={error} />
 
             {/* Token Comparison Cards */}
-            <div className="flex flex-col md:flex-row gap-4 items-center overflow-x-auto">
+            <div className="flex flex-col md:flex-row gap-4 items-center">
               {/* Source Token Card */}
               <TokenCard
                 variant="source"
