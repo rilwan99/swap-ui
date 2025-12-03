@@ -10,6 +10,7 @@ import { SupportedTokensList } from '@/components/SupportedTokensList'
 import { ErrorDisplay } from '@/components/ErrorDisplay'
 import { TokenCard } from '@/components/TokenCard'
 import { ExchangeRateDisplay } from '@/components/ExchangeRateDisplay'
+import { ThemeToggle } from '@/components/ThemeToggle'
 
 export default function TokenPriceExplorer() {
   const [usdAmount, setUsdAmount] = useState<string>('')
@@ -38,12 +39,15 @@ export default function TokenPriceExplorer() {
   })
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 md:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-purple-950 p-4 md:p-8 transition-colors duration-300">
       <div className="max-w-4xl mx-auto">
-        <Card className="border-2 shadow-xl">
+        <div className="flex justify-end mb-4">
+          <ThemeToggle />
+        </div>
+        <Card className="border-2 shadow-2xl backdrop-blur-sm bg-card/95 transition-all duration-300">
           <CardContent className="p-6 md:p-8">
             {/* Header */}
-            <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent animate-in fade-in slide-in-from-top-4 duration-700">
               Token Price Explorer
             </h1>
 
@@ -70,7 +74,7 @@ export default function TokenPriceExplorer() {
 
               {/* Arrow */}
               <div className="flex justify-center md:mx-2 shrink-0 transform rotate-90 md:rotate-0">
-                <ArrowRight className="h-8 w-8 text-muted-foreground" />
+                <ArrowRight className="h-8 w-8 text-primary/60 hover:text-primary transition-all duration-300 animate-pulse" />
               </div>
 
               {/* Target Token Card */}

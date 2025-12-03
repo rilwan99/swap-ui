@@ -34,8 +34,8 @@ export const TokenAmountDisplay = ({
           <span className="text-sm">Calculating...</span>
         </div>
       ) : (
-        <div className="h-12 flex items-center justify-between px-3 bg-background/50 rounded-md border gap-2">
-          <p className="text-xl font-bold break-all flex-1">
+        <div className="h-12 flex items-center justify-between px-3 bg-background/70 backdrop-blur-sm rounded-md border-2 border-border hover:border-primary/50 transition-all duration-200 gap-2">
+          <p className="text-xl font-bold break-all flex-1 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
             {formatNumberWithCommas(amount)}
           </p>
           <TokenSelector

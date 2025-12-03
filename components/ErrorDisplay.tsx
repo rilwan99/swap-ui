@@ -12,7 +12,7 @@ export const ErrorDisplay = ({ error }: ErrorDisplayProps) => {
   }
 
   return (
-    <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded-md text-red-700 text-sm">
+    <div className="mb-6 p-4 bg-destructive/10 border-2 border-destructive/30 rounded-lg text-destructive text-sm font-medium backdrop-blur-sm animate-in fade-in slide-in-from-top-2 duration-300">
       {error}
     </div>
   )
