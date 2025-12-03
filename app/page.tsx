@@ -156,6 +156,23 @@ export default function TokenPriceExplorer() {
               <Card className="w-full md:flex-1 border-2 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900">
                 <CardContent className="p-6">
                   <div className="space-y-4">
+                    {/* USD Amount Input */}
+                    <div>
+                      <Label htmlFor="usd-amount" className="text-xs font-medium text-muted-foreground mb-2 block">
+                        Enter USD Amount
+                      </Label>
+                      <Input
+                        id="usd-amount"
+                        type="number"
+                        value={usdAmount}
+                        onChange={(e) => setUsdAmount(e.target.value)}
+                        placeholder="0.00"
+                        className="h-12"
+                        min="0"
+                        step="0.01"
+                      />
+                    </div>
+
                     {/* Token Selector */}
                     <div>
                       <Label htmlFor="source-token" className="text-xs font-medium text-muted-foreground mb-2 block">
@@ -181,45 +198,24 @@ export default function TokenPriceExplorer() {
                       </Select>
                     </div>
 
-                    {/* USD Amount Input */}
-                    <div>
-                      <Label htmlFor="usd-amount" className="text-xs font-medium text-muted-foreground mb-2 block">
-                        Enter USD Amount
-                      </Label>
-                      <Input
-                        id="usd-amount"
-                        type="number"
-                        value={usdAmount}
-                        onChange={(e) => setUsdAmount(e.target.value)}
-                        placeholder="Enter USD amount"
-                        className="h-12"
-                        min="0"
-                        step="0.01"
-                      />
-                    </div>
-
                     {/* Token Amount Display */}
                     <div>
-                      <Label className="text-xs font-medium text-muted-foreground mb-2 block">
-                        {selectedSourceToken} Amount
-                      </Label>
                       {loading ? (
-                        <div className="flex items-center gap-2">
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                          <span className="text-xs">Calculating...</span>
+                        <div className="flex items-center gap-2 h-12">
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                          <span className="text-sm">Calculating...</span>
                         </div>
                       ) : (
-                        <p className="text-sm font-semibold text-muted-foreground">
-                          {sourceAmount} {selectedSourceToken}
-                        </p>
+                        <div className="h-12 flex items-center px-3 bg-background/50 rounded-md border">
+                          <p className="text-xl font-bold break-all">
+                            {sourceAmount}
+                          </p>
+                        </div>
                       )}
                     </div>
 
                     {/* Price Display */}
                     <div>
-                      <Label className="text-xs font-medium text-muted-foreground mb-1 block">
-                        Price per {selectedSourceToken}
-                      </Label>
                       {loading ? (
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Loader2 className="h-4 w-4 animate-spin" />
@@ -271,9 +267,6 @@ export default function TokenPriceExplorer() {
 
                     {/* Amount Display (Read-only) */}
                     <div>
-                      <Label className="text-xs font-medium text-muted-foreground mb-2 block">
-                        You Receive
-                      </Label>
                       {loading ? (
                         <div className="flex items-center gap-2 h-12">
                           <Loader2 className="h-5 w-5 animate-spin" />
@@ -290,9 +283,6 @@ export default function TokenPriceExplorer() {
 
                     {/* Price Display */}
                     <div>
-                      <Label className="text-xs font-medium text-muted-foreground mb-1 block">
-                        Price per {selectedTargetToken}
-                      </Label>
                       {loading ? (
                         <div className="flex items-center gap-2 text-muted-foreground">
                           <Loader2 className="h-4 w-4 animate-spin" />
