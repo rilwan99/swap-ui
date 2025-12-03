@@ -33,7 +33,8 @@ export default function TokenPriceExplorer() {
   const [selectedSourceToken, setSelectedSourceToken] = useState<string>('USDC')
   const [selectedTargetToken, setSelectedTargetToken] = useState<string>('ETH')
 
-  const [sourceAmount, setSourceAmount] = useState<string>('')
+  const [usdAmount, setUsdAmount] = useState<string>('')
+  const [sourceAmount, setSourceAmount] = useState<string>('0')
   const [targetAmount, setTargetAmount] = useState<string>('0')
   const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState<string>('')
@@ -44,11 +45,12 @@ export default function TokenPriceExplorer() {
   const availableSourceTokens = TOKENS.filter(t => t.symbol !== selectedTargetToken)
   const availableTargetTokens = TOKENS.filter(t => t.symbol !== selectedSourceToken)
 
-  // Fetch token prices dynamically when source amount or tokens change
+  // Fetch token prices dynamically when USD amount or tokens change
   useEffect(() => {
     const fetchTokenPrices = async () => {
       // Only fetch if user has entered an amount
-      if (!sourceAmount || parseFloat(sourceAmount) <= 0) {
+      if (!usdAmount || parseFloat(usdAmount) <= 0) {
+        setSourceAmount('0')
         setTargetAmount('0')
         setTokenData({})
         return
@@ -65,12 +67,12 @@ export default function TokenPriceExplorer() {
           throw new Error('Token configuration not found')
         }
 
-        // Fetch source token (USDC) data
+        // Fetch source token data
         const sourceResponse = await fetch(`/api/token-price?symbol=${selectedSourceToken}&chainId=${sourceToken.chainId}`)
         if (!sourceResponse.ok) throw new Error('Failed to fetch source token data')
         const sourceData = await sourceResponse.json()
 
-        // Fetch target token (ETH) data
+        // Fetch target token data
         const targetResponse = await fetch(`/api/token-price?symbol=${selectedTargetToken}&chainId=${targetToken.chainId}`)
         if (!targetResponse.ok) throw new Error('Failed to fetch target token data')
         const targetData = await targetResponse.json()
@@ -92,15 +94,18 @@ export default function TokenPriceExplorer() {
         }
         setTokenData(newTokenData)
 
-        // Calculate target amount
-        const sourceAmountNum = parseFloat(sourceAmount)
-        const sourceValueInUSD = sourceAmountNum * sourceData.tokenPrice.unitPrice
-        const targetAmountNum = sourceValueInUSD / targetData.tokenPrice.unitPrice
-        setTargetAmount(targetAmountNum.toFixed(6))
+        // Calculate token amounts from USD value
+        const usdValue = parseFloat(usdAmount)
+        const sourceTokenAmount = usdValue / sourceData.tokenPrice.unitPrice
+        const targetTokenAmount = usdValue / targetData.tokenPrice.unitPrice
+
+        setSourceAmount(sourceTokenAmount.toFixed(6))
+        setTargetAmount(targetTokenAmount.toFixed(6))
 
       } catch (err) {
         setError('Failed to fetch token prices. Please try again.')
         console.error('Error fetching token data:', err)
+        setSourceAmount('0')
         setTargetAmount('0')
       } finally {
         setLoading(false)
@@ -113,7 +118,7 @@ export default function TokenPriceExplorer() {
     }, 1000)
 
     return () => clearTimeout(timeoutId)
-  }, [sourceAmount, selectedSourceToken, selectedTargetToken])
+  }, [usdAmount, selectedSourceToken, selectedTargetToken])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 md:p-8">
@@ -136,6 +141,23 @@ export default function TokenPriceExplorer() {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+
+            {/* USD Amount Input */}
+            <div className="mb-8">
+              <Label htmlFor="usd-amount" className="text-sm font-medium mb-2 block">
+                Enter USD Amount
+              </Label>
+              <Input
+                id="usd-amount"
+                type="number"
+                value={usdAmount}
+                onChange={(e) => setUsdAmount(e.target.value)}
+                placeholder="Enter USD amount"
+                className="text-lg h-14"
+                min="0"
+                step="0.01"
+              />
             </div>
 
             {/* Error Display */}
@@ -176,21 +198,23 @@ export default function TokenPriceExplorer() {
                       </Select>
                     </div>
 
-                    {/* Amount Input */}
+                    {/* Amount Display */}
                     <div>
-                      <Label htmlFor="source-amount" className="text-xs font-medium text-muted-foreground mb-2 block">
+                      <Label className="text-xs font-medium text-muted-foreground mb-2 block">
                         Amount
                       </Label>
-                      <Input
-                        id="source-amount"
-                        type="number"
-                        value={sourceAmount}
-                        onChange={(e) => setSourceAmount(e.target.value)}
-                        placeholder={`Enter ${selectedSourceToken} amount`}
-                        className="text-xl font-bold h-12"
-                        min="0"
-                        step="0.01"
-                      />
+                      {loading ? (
+                        <div className="flex items-center gap-2 h-12">
+                          <Loader2 className="h-5 w-5 animate-spin" />
+                          <span className="text-sm">Calculating...</span>
+                        </div>
+                      ) : (
+                        <div className="h-12 flex items-center px-3 bg-background/50 rounded-md border">
+                          <p className="text-xl font-bold break-all">
+                            {sourceAmount}
+                          </p>
+                        </div>
+                      )}
                     </div>
 
                     {/* Price Display */}
