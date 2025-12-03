@@ -48,6 +48,19 @@ interface TokenData {
   price: number
 }
 
+// Utility function to format numbers with commas
+const formatNumberWithCommas = (value: string | number): string => {
+  const num = typeof value === 'string' ? parseFloat(value) : value
+  if (isNaN(num)) return '0'
+  
+  // Split into integer and decimal parts
+  const parts = num.toString().split('.')
+  const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  
+  // Keep decimal part if it exists
+  return parts.length > 1 ? `${integerPart}.${parts[1]}` : integerPart
+}
+
 export default function TokenPriceExplorer() {
   // Customizable tokens with defaults: USDC -> ETH
   const [selectedSourceToken, setSelectedSourceToken] = useState<string>('USDC')
@@ -151,21 +164,26 @@ export default function TokenPriceExplorer() {
             </h1>
 
             {/* Available Tokens Display */}
-            <div className="flex flex-wrap justify-center gap-3 mb-8">
-              {TOKENS.map((token) => (
-                <Card key={token.symbol} className="border">
-                  <CardContent className="px-1 px-4">
-                    <div className="flex items-center gap-2">
-                      <img
-                        src={token.image}
-                        alt={token.symbol}
-                        className="w-6 h-6 rounded-full"
-                      />
-                      <p className="font-bold text-sm">{token.symbol}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+            <div className="mb-8">
+              <p className="text-sm text-muted-foreground text-center mb-3 font-medium">
+                Supported Tokens
+              </p>
+              <div className="flex flex-wrap justify-center gap-3">
+                {TOKENS.map((token) => (
+                  <Card key={token.symbol} className="border">
+                    <CardContent className="px-1 px-4">
+                      <div className="flex items-center gap-2">
+                        <img
+                          src={token.image}
+                          alt={token.symbol}
+                          className="w-6 h-6 rounded-full"
+                        />
+                        <p className="font-bold text-sm">{token.symbol}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
             </div>
 
             {/* Error Display */}
@@ -188,13 +206,16 @@ export default function TokenPriceExplorer() {
                       </Label>
                       <Input
                         id="usd-amount"
-                        type="number"
-                        value={usdAmount}
-                        onChange={(e) => setUsdAmount(e.target.value)}
+                        type="text"
+                        value={usdAmount ? formatNumberWithCommas(usdAmount) : ''}
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/,/g, '')
+                          if (value === '' || !isNaN(parseFloat(value))) {
+                            setUsdAmount(value)
+                          }
+                        }}
                         placeholder="0.00"
                         className="h-12"
-                        min="0"
-                        step="0.01"
                       />
                     </div>
 
@@ -211,7 +232,7 @@ export default function TokenPriceExplorer() {
                       ) : (
                         <div className="h-12 flex items-center justify-between px-3 bg-background/50 rounded-md border gap-2">
                           <p className="text-xl font-bold break-all flex-1">
-                            {sourceAmount}
+                            {formatNumberWithCommas(sourceAmount)}
                           </p>
                           <Select
                             value={selectedSourceToken}
@@ -248,7 +269,7 @@ export default function TokenPriceExplorer() {
                         </div>
                       ) : (
                         <p className="text-sm text-muted-foreground font-medium">
-                          ${tokenData[selectedSourceToken]?.price.toFixed(4) || '—'}
+                          ${tokenData[selectedSourceToken]?.price ? formatNumberWithCommas(tokenData[selectedSourceToken].price.toFixed(4)) : '—'}
                         </p>
                       )}
                     </div>
@@ -265,6 +286,12 @@ export default function TokenPriceExplorer() {
               <Card className="w-full md:flex-1 border-2 bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900">
                 <CardContent className="p-6">
                   <div className="space-y-4">
+                    {/* Invisible spacer to match source card height */}
+                    <div className="invisible h-[68px]" aria-hidden="true">
+                      <Label className="text-xs font-medium mb-2 block">Spacer</Label>
+                      <div className="h-12"></div>
+                    </div>
+
                     {/* Token Amount Display with Integrated Selector */}
                     <div>
                       <Label htmlFor="target-token" className="text-xs font-medium text-muted-foreground mb-2 block">
@@ -278,7 +305,7 @@ export default function TokenPriceExplorer() {
                       ) : (
                         <div className="h-12 flex items-center justify-between px-3 bg-background/50 rounded-md border gap-2">
                           <p className="text-xl font-bold break-all flex-1">
-                            {targetAmount}
+                            {formatNumberWithCommas(targetAmount)}
                           </p>
                           <Select
                             value={selectedTargetToken}
@@ -315,7 +342,7 @@ export default function TokenPriceExplorer() {
                         </div>
                       ) : (
                         <p className="text-sm text-muted-foreground font-medium">
-                          ${tokenData[selectedTargetToken]?.price.toFixed(4) || '—'}
+                          ${tokenData[selectedTargetToken]?.price ? formatNumberWithCommas(tokenData[selectedTargetToken].price.toFixed(4)) : '—'}
                         </p>
                       )}
                     </div>
