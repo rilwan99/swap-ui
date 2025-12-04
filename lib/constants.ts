@@ -43,6 +43,13 @@ export const TOKENS: Token[] = [
   },
 ];
 
+// Map chainId to network name
+export const CHAIN_NAMES: Record<string, string> = {
+  "1": "Ethereum",
+  "137": "Polygon",
+  "8453": "Base",
+};
+
 /**
  * Default token selections
  */
