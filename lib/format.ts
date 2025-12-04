@@ -43,15 +43,3 @@ export const formatTokenAmount = (value: string | number): string => {
   }
   return formatted;
 };
-
-// Removes comma separators from a formatted number string
-export const removeCommas = (value: string): string => {
-  return value.replace(/,/g, "");
-};
-
-// Validates if a string represents a valid positive number
-export const isValidPositiveNumber = (value: string): boolean => {
-  if (value === "") return true; // Allow empty string
-  const num = parseFloat(value);
-  return !isNaN(num) && num > 0;
-};
