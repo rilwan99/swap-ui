@@ -47,7 +47,7 @@ export default function TokenPriceExplorer() {
           style={{ backgroundImage: 'url(/background3.jpg)' }}
         />
         {/* Gradient Overlay for better readability and theme integration */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/40 via-purple-50/30 to-cyan-50/40 dark:from-slate-950/60 dark:via-blue-950/50 dark:to-purple-950/60" />
+        <div className="absolute inset-0 bg-gradient-to-br from-white/70 via-blue-50/60 to-purple-50/70 dark:from-slate-950/60 dark:via-blue-950/50 dark:to-purple-950/60" />
       </div>
 
       <div className="max-w-4xl mx-auto relative z-10">
@@ -57,7 +57,7 @@ export default function TokenPriceExplorer() {
         <Card className="border-2 shadow-2xl backdrop-blur-sm bg-card/90 transition-all duration-300">
           <CardContent className="p-6 md:p-8">
             {/* Header */}
-            <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent animate-in fade-in slide-in-from-top-4 duration-700">
+            <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 bg-gradient-to-r from-primary via-purple-600 to-blue-600 dark:from-primary dark:via-secondary dark:to-accent bg-clip-text text-transparent animate-in fade-in slide-in-from-top-4 duration-700">
               Token Price Explorer
             </h1>
 
