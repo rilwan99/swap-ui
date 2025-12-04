@@ -18,10 +18,10 @@ export const TokenPriceDisplay = ({
       {loading ? (
         <Skeleton className="h-5 w-24 bg-muted-foreground/20 dark:bg-muted-foreground/30" />
       ) : (
-        <p className="text-sm font-semibold text-foreground">
+        <p className="text-sm font-semibold text-muted-foreground">
           {tokenData?.symbol && tokenData?.price
             ? `1 ${tokenData.symbol} ≈ $${formatNumberWithCommas(tokenData.price.toFixed(TOKEN_PRICE_DECIMALS))}`
-            : '—'
+            : '-'
           }
         </p>
       )}

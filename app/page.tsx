@@ -95,6 +95,7 @@ export default function TokenPriceExplorer() {
               targetToken={selectedTargetToken}
               sourceTokenData={tokenData[selectedSourceToken]}
               targetTokenData={tokenData[selectedTargetToken]}
+              loading={loading}
             />
           </CardContent>
         </Card>

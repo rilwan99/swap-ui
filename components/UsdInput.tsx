@@ -18,7 +18,7 @@ export const UsdInput = ({ value, onChange }: UsdInputProps) => {
   return (
     <div>
       <Label htmlFor="usd-amount" className="text-sm font-semibold text-foreground mb-2 block">
-        Enter USD Amount
+        USD Amount
       </Label>
       <Input
         id="usd-amount"
