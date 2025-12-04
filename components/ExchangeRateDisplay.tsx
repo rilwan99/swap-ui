@@ -24,7 +24,7 @@ export const ExchangeRateDisplay = ({
   )
 
   return (
-    <div className="mt-6 p-4 bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 rounded-lg text-center border border-primary/20 backdrop-blur-sm transition-all duration-300 hover:shadow-md">
+    <div className="mt-6 p-4 bg-gradient-to-r from-primary/10 via-secondary/10 to-accent/10 rounded-lg text-center border border-primary/20 backdrop-blur-sm">
       <p className="text-sm text-muted-foreground">
         1 {sourceToken} ≈{' '}
         <span className="font-semibold text-primary">{exchangeRate}</span>{' '}

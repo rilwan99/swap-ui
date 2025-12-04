@@ -12,17 +12,19 @@ export const TokenPriceDisplay = ({
   loading,
   tokenData,
 }: TokenPriceDisplayProps) => {
-  if (loading) {
-    return (
-      <Skeleton className="h-12 w-full rounded-md bg-muted-foreground/20 dark:bg-muted-foreground/30" />
-    )
-  }
 
   return (
     <div className="px-3 py-2 bg-muted/50 rounded-md border border-border/50 backdrop-blur-sm">
-      <p className="text-sm font-semibold text-foreground">
-        ${tokenData?.price ? formatNumberWithCommas(tokenData.price.toFixed(TOKEN_PRICE_DECIMALS)) : '—'}
-      </p>
+      {loading ? (
+        <Skeleton className="h-5 w-24 bg-muted-foreground/20 dark:bg-muted-foreground/30" />
+      ) : (
+        <p className="text-sm font-semibold text-foreground">
+          {tokenData?.symbol && tokenData?.price
+            ? `1 ${tokenData.symbol} ≈ $${formatNumberWithCommas(tokenData.price.toFixed(TOKEN_PRICE_DECIMALS))}`
+            : '—'
+          }
+        </p>
+      )}
     </div>
   )
 }

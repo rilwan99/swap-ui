@@ -33,7 +33,7 @@ export const TokenCard = ({
     : 'from-purple-50/80 via-purple-100/60 to-pink-50/80 dark:from-purple-950/40 dark:via-purple-900/30 dark:to-pink-950/40'
 
   return (
-    <Card className={`w-full md:flex-1 border-2 bg-gradient-to-br ${gradientClass} backdrop-blur-sm transition-all duration-300 hover:shadow-lg hover:scale-[1.01]`}>
+    <Card className={`w-full md:flex-1 border-2 bg-gradient-to-br ${gradientClass} backdrop-blur-sm`}>
       <CardContent className="p-6">
         <div className="space-y-4">
           {/* USD Input (only for source card) */}

@@ -13,7 +13,7 @@ export const SupportedTokensList = ({ tokens }: SupportedTokensListProps) => {
       </p>
       <div className="flex flex-wrap justify-center gap-3">
         {tokens.map((token) => (
-          <Card key={token.symbol} className="border border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5 hover:from-primary/10 hover:to-secondary/10 transition-all duration-300 hover:shadow-md hover:scale-105">
+          <Card key={token.symbol} className="border border-primary/20 bg-gradient-to-br from-primary/5 to-secondary/5">
             <CardContent className="px-1 px-4">
               <div className="flex items-center gap-2">
                 <img
