@@ -14,6 +14,8 @@ A real-time cryptocurrency price comparison interface built with Next.js 16 and 
 
 **TypeScript (Strict)** — Catches bugs at compile-time, not runtime. Strict mode enforces best practices and makes refactoring safe.
 
+**react-number-format (NumericFormat)** — Handles numeric input validation and formatting without manual boilerplate. Automatically manages thousand separators, decimal precision, and prevents invalid input (negative numbers, leading zeros). Perfect fit for a price comparison tool where users only need clean, validated USD input.
+
 ## Supported Tokens
 
 | Token | Network  | Chain ID |
