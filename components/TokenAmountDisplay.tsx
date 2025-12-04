@@ -1,5 +1,5 @@
-import { Loader2 } from 'lucide-react'
 import { Label } from '@/components/ui/label'
+import { Skeleton } from '@/components/ui/skeleton'
 import { TokenSelector } from './TokenSelector'
 import { formatNumberWithCommas } from '@/lib/format'
 import type { Token } from '@/lib/types'
@@ -29,9 +29,8 @@ export const TokenAmountDisplay = ({
         {label}
       </Label>
       {loading ? (
-        <div className="flex items-center gap-2 h-12">
-          <Loader2 className="h-5 w-5 animate-spin" />
-          <span className="text-sm">Calculating...</span>
+        <div className="h-12 flex items-center gap-2">
+          <Skeleton className="h-12 flex-1 bg-muted-foreground/20 dark:bg-muted-foreground/30" />
         </div>
       ) : (
         <div className="h-12 flex items-center justify-between px-3 bg-background/70 backdrop-blur-sm rounded-md border-2 border-border hover:border-primary/50 transition-all duration-200 gap-2">
