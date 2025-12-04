@@ -2,8 +2,15 @@ import {
   getAssetErc20ByChainAndSymbol,
   getAssetPriceInfo,
 } from "@funkit/api-base";
+import { validateInternalRequest } from "@/lib/apiSecurity";
 
 export async function GET(request: Request) {
+  // Security Check
+  const validation = await validateInternalRequest();
+  if (!validation.isValid) {
+    return Response.json({ error: validation.error }, { status: 403 });
+  }
+
   const { searchParams } = new URL(request.url);
   const symbol = searchParams.get("symbol") || "ETH";
   const chainId = searchParams.get("chainId") || "1";

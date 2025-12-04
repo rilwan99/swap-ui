@@ -6,7 +6,12 @@ export const fetchTokenPrice = async (
   chainId: string
 ): Promise<TokenPriceResponse> => {
   const response = await fetch(
-    `/api/token-price?symbol=${symbol}&chainId=${chainId}`
+    `/api/token-price?symbol=${symbol}&chainId=${chainId}`,
+    {
+      headers: {
+        "x-internal-request": process.env.NEXT_PUBLIC_INTERNAL_API_SECRET || "",
+      },
+    }
   );
 
   if (!response.ok) {
