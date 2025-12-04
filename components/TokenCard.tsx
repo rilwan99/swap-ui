@@ -41,9 +41,9 @@ export const TokenCard = ({
             <UsdInput value={usdAmount} onChange={onUsdAmountChange} />
           )}
 
-          {/* Spacer for target card to match source card height */}
+          {/* Spacer for target card to match source card height (desktop only) */}
           {!isSource && (
-            <div className="invisible h-[68px]" aria-hidden="true">
+            <div className="invisible h-[68px] hidden md:block" aria-hidden="true">
               <div className="text-xs font-medium mb-2">Spacer</div>
               <div className="h-12"></div>
             </div>
