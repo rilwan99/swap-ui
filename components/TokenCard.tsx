@@ -51,7 +51,7 @@ export const TokenCard = ({
 
           {/* Token Amount Display with Selector */}
           <TokenAmountDisplay
-            label={isSource ? 'From' : 'To'}
+            label={isSource ? 'Sell' : 'Buy'}
             id={isSource ? 'source-token' : 'target-token'}
             amount={amount}
             loading={loading}
