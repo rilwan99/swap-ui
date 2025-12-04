@@ -8,7 +8,6 @@ import { useTokenSelection } from '@/hooks/useTokenSelection'
 import { useTokenPrices } from '@/hooks/useTokenPrices'
 import { SupportedTokensList, TokenCard, ExchangeRateDisplay } from '@/components/token'
 import { ErrorDisplay } from '@/components/common'
-import { ThemeToggle } from '@/components/theme'
 
 export default function TokenPriceExplorer() {
   const [usdAmount, setUsdAmount] = useState<string>('')
@@ -49,9 +48,6 @@ export default function TokenPriceExplorer() {
       </div>
 
       <div className="max-w-4xl mx-auto relative z-10">
-        <div className="flex justify-end mb-4">
-          <ThemeToggle />
-        </div>
         <Card className="border-2 shadow-2xl backdrop-blur-sm bg-card/50 transition-all duration-300">
           <CardContent className="p-6 md:p-8">
             {/* Header */}
