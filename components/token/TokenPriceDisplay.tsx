@@ -1,6 +1,6 @@
 import { Skeleton } from '@/components/ui/skeleton'
 import { formatNumberWithCommas } from '@/lib/format'
-import { TOKEN_PRICE_DECIMALS } from '@/lib/constants'
+import { TOKEN_PRICE_DECIMALS } from '@/lib/config'
 import type { TokenData } from '@/lib/types'
 
 interface TokenPriceDisplayProps {

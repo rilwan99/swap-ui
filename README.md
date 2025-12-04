@@ -1,36 +1,140 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Token Price Explorer
 
-## Getting Started
+A React-based token swap interface that allows users to explore crypto token values and exchange rates in real-time.
 
-First, run the development server:
+## Live Demo
+
+**Deployed Application:** https://swap-ui-phi.vercel.app/
+
+## Overview
+
+This application provides a simple interface for users to:
+
+- Input a USD amount
+- Select a source token and destination token
+- View real-time exchange rates and equivalent token amounts
+
+## Tech Stack
+
+- **Framework:** Next.js 16 (App Router) with React 19
+- **Language:** TypeScript (Strict mode)
+- **Styling:** TailwindCSS + shadcn/ui components
+- **State Management:** React Query (@tanstack/react-query)
+- **Data Fetching:** @funkit/api-base for token data and pricing
+- **Package Manager:** pnpm
+- **Deployment:** Vercel
+
+## Supported Tokens
+
+| Token | Chain ID |
+| ----- | -------- |
+| USDC  | 1        |
+| USDT  | 137      |
+| ETH   | 8453     |
+| WBTC  | 1        |
+
+## Local Setup
+
+### Prerequisites
+
+- Node.js (v16 or higher)
+- npm, yarn, pnpm, or bun
+
+### Installation
+
+1. Clone the repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/rilwan99/swap-ui
+cd swap-ui
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Run the development server
 
-## Learn More
+```bash
+pnpm run dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Key Features
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Real-time token price updates with React Query caching
+- Support for multiple blockchain networks (Ethereum, Polygon, Base)
+- Debounced input for optimal API performance
+- Dark/light theme support with next-themes
+- Responsive design with mobile-first approach
+- Comprehensive error handling and loading states
+- Type-safe development with TypeScript
+- Accessible UI with shadcn/ui components
+- API security validation
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This project follows a feature-based architecture with clear separation of concerns:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```
+├── app/                 # Next.js App Router (pages & API routes)
+├── components/          # React components organized by feature
+│   ├── common/         # Shared components (ErrorDisplay, etc.)
+│   ├── theme/          # Theme components (ThemeProvider, ThemeToggle)
+│   ├── token/          # Token feature components
+│   └── ui/             # shadcn/ui design system primitives
+├── hooks/              # Custom React hooks
+├── lib/                # Utilities and library code
+│   ├── config/         # Configuration (app constants, tokens)
+│   ├── services/       # Business logic & API calls
+│   └── types/          # TypeScript type definitions
+└── public/             # Static assets
+```
+
+For detailed architecture documentation, see [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## Design Decisions
+
+- **Feature-based organization**: Components grouped by feature for better scalability
+- **Service layer**: Business logic separated from UI components
+- **React Query**: Server state management with automatic caching and retries
+- **Debouncing**: 500ms debounce on input to reduce API calls
+- **Type safety**: Strict TypeScript configuration for compile-time error detection
+- **Component composition**: Reusable components with clear prop interfaces
+- **Theme support**: Dark/light mode with system preference detection
+- **Error boundaries**: Comprehensive error handling at multiple levels
+
+## Libraries Used
+
+- **@funkit/api-base**: Fetching token information and prices from multiple chains
+- **@tanstack/react-query**: Server state management with caching, retries, and request deduplication
+- **next-themes**: Theme management with system preference detection
+- **shadcn/ui**: Accessible, customizable UI components built on Radix UI
+- **tailwindcss**: Utility-first CSS framework for rapid UI development
+- **lucide-react**: Modern icon library
+- **react-number-format**: Input formatting and validation
+
+## Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+FUN_API_KEY=                     # API key for @funkit/api-base
+INTERNAL_API_SECRET=             # Server-side API security
+NEXT_PUBLIC_INTERNAL_API_SECRET= # Client-side API security
+NEXT_PUBLIC_APP_URL=             # Application URL
+```
+
+See `.env.example` for reference.
+
+## Assumptions
+
+- Users have basic knowledge of cryptocurrency tokens
+- Token prices are fetched and displayed in USD
+- Source and target tokens must be different
+- Supported tokens are hardcoded (USDC, USDT, ETH, WBTC)
+- Price data refreshes automatically every 30 seconds (via React Query)
+- Minimum USD input required for calculations

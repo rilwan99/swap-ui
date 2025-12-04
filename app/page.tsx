@@ -3,14 +3,12 @@
 import { useState } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { ArrowRight } from 'lucide-react'
-import { TOKENS } from '@/lib/constants'
+import { TOKENS } from '@/lib/config'
 import { useTokenSelection } from '@/hooks/useTokenSelection'
 import { useTokenPrices } from '@/hooks/useTokenPrices'
-import { SupportedTokensList } from '@/components/SupportedTokensList'
-import { ErrorDisplay } from '@/components/ErrorDisplay'
-import { TokenCard } from '@/components/TokenCard'
-import { ExchangeRateDisplay } from '@/components/ExchangeRateDisplay'
-import { ThemeToggle } from '@/components/ThemeToggle'
+import { SupportedTokensList, TokenCard, ExchangeRateDisplay } from '@/components/token'
+import { ErrorDisplay } from '@/components/common'
+import { ThemeToggle } from '@/components/theme'
 
 export default function TokenPriceExplorer() {
   const [usdAmount, setUsdAmount] = useState<string>('')

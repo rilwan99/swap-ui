@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
-import { CHAIN_NAMES } from '@/lib/constants'
+import { CHAIN_NAMES } from '@/lib/config'
 import type { Token } from '@/lib/types'
 
 interface SupportedTokensListProps {

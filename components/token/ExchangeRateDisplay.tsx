@@ -1,4 +1,4 @@
-import { calculateExchangeRate } from '@/lib/api'
+import { calculateExchangeRate } from '@/lib/services'
 import { Skeleton } from '@/components/ui/skeleton'
 import type { TokenData } from '@/lib/types'
 

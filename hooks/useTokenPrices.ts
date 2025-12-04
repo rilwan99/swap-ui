@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { fetchTokenPrice, calculateTokenAmount } from "@/lib/api";
+import { fetchTokenPrice, calculateTokenAmount } from "@/lib/services";
 import {
   TOKENS,
   API_DEBOUNCE_DELAY,
   TOKEN_AMOUNT_DECIMALS,
-} from "@/lib/constants";
+} from "@/lib/config";
 import type { TokenData } from "@/lib/types";
 import { useDebounce } from "./useDebounce";
 

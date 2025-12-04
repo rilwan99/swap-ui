@@ -3,7 +3,7 @@ import {
   TOKENS,
   DEFAULT_SOURCE_TOKEN,
   DEFAULT_TARGET_TOKEN,
-} from "@/lib/constants";
+} from "@/lib/config";
 import type { Token } from "@/lib/types";
 
 interface UseTokenSelectionReturn {
