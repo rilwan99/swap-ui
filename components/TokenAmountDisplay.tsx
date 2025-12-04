@@ -1,7 +1,7 @@
 import { Label } from '@/components/ui/label'
 import { Skeleton } from '@/components/ui/skeleton'
 import { TokenSelector } from './TokenSelector'
-import { formatNumberWithCommas } from '@/lib/format'
+import { formatTokenAmount, formatNumberWithCommas } from '@/lib/format'
 import type { Token } from '@/lib/types'
 
 interface TokenAmountDisplayProps {
@@ -32,8 +32,11 @@ export const TokenAmountDisplay = ({
         {loading ? (
           <Skeleton className="h-6 flex-1 bg-muted-foreground/20 dark:bg-muted-foreground/30" />
         ) : (
-          <p className="text-xl font-bold break-all flex-1 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            {formatNumberWithCommas(amount)}
+          <p
+            className="text-xl font-bold truncate flex-1 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent cursor-help"
+            title={`Full amount: ${formatNumberWithCommas(amount)}`}
+          >
+            {formatTokenAmount(amount)}
           </p>
         )}
         <TokenSelector
