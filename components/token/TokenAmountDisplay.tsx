@@ -33,7 +33,7 @@ export const TokenAmountDisplay = ({
           <Skeleton className="h-6 flex-1 bg-muted-foreground/20 dark:bg-muted-foreground/30" />
         ) : (
           <p
-            className="text-xl font-bold truncate flex-1 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent cursor-help"
+            className="text-xl font-bold truncate flex-1 bg-gradient-to-r  bg-clip-text cursor-help"
             title={`Full amount: ${formatNumberWithCommas(amount)}`}
           >
             {formatTokenAmount(amount)}
