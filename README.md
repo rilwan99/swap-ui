@@ -38,13 +38,13 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 
 ## Key Technical Decisions
 
-### 1. Performance Optimization: Smart Debouncing
+### 1. Perf Optimization: Debouncing
 
-**The Problem:** Each keystroke could trigger an API call, overwhelming the server and creating a janky user experience.
+Each time a user enters a USD amount or selects a token, a request is sent to the backend API route (`/api/token-price`), which fetches current prices from `@funkit/api-base`. Without optimization, this creates a performance bottleneck.
 
-**The Solution:** Implemented a 500ms debounce on USD input. After testing various delays (300ms felt too fast, 700ms felt sluggish), 500ms hit the sweet spot between responsiveness and efficiency.
+**The Solution:** Implemented a **500ms debounce** on USD input. This delays API calls until the user stops typing, ensuring we only fetch prices for the final amount.
 
-**Impact:** Reduces API calls by ~80% during typing while maintaining a snappy feel.
+Why 500ms? After testing various delays, 500ms feels like the sweet spot: instant but eliminates noise
 
 ### 2. State Management: React Query Over Redux
 
@@ -122,7 +122,7 @@ As features grow, finding related code is trivial. Adding a new token feature me
 - **Static token list** — Supported tokens (USDC, USDT, ETH, WBTC) are hardcoded.
 - **Price comparison only** — This is a price explorer, not an actual swap executor. No wallet connections, no transactions.
 
-## Trade-offs & Future Improvements
+## Future Improvements
 
 **What I'd add with more time:**
 
@@ -132,9 +132,3 @@ As features grow, finding related code is trivial. Adding a new token feature me
 - **WebSocket connection** for truly real-time prices (currently using on-demand fetching with 30s cache freshness)
 - **Expand token list** with dynamic discovery from the API
 - **Token search** (currently only 4 tokens, but manual selection would scale poorly beyond ~20)
-
-**Trade-offs made:**
-
-- Hardcoded token list vs. dynamic fetching (keeping it simple for MVP)
-- Client-side debouncing vs. server-side rate limiting (both is ideal, but debouncing solves 80% of the problem)
-- On-demand fetching vs. WebSockets (on-demand is simpler, works everywhere, and with 30s caching is efficient enough for this use case)
