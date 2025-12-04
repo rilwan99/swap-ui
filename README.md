@@ -72,7 +72,7 @@ This prevents unauthorized access while keeping the implementation simple.
 components/
 ├── token/      # All token-related UI (7 components)
 ├── theme/      # Theme switching logic
-└── common/     # Shared utilities
+└── ui/         # Shadcn components
 
 lib/
 ├── services/   # API calls separated from UI
@@ -85,7 +85,6 @@ As features grow, finding related code is trivial. Adding a new token feature me
 ### 5. UX Details That Matter
 
 - **Loading skeletons** instead of spinners (less jarring, users see structure immediately)
-- **Dark mode** by default with user-enabled toggle
 - **Redirect handling** for invalid routes (404s go back to home)
 - **Mobile-first design** (responsive breakpoints tested on actual devices)
 
@@ -96,7 +95,6 @@ As features grow, finding related code is trivial. Adding a new token feature me
 │   └── api/token-price/ # Backend endpoint
 ├── components/
 │   ├── token/          # Token comparison UI
-│   ├── theme/          # Dark/light mode toggle
 │   └── ui/             # shadcn primitives
 ├── hooks/              # useTokenPrices, useDebounce, etc.
 └── lib/
