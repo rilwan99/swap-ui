@@ -103,6 +103,25 @@ As features grow, finding related code is trivial. Adding a new token feature me
     └── types/          # TypeScript interfaces
 ```
 
+## Assumptions
+
+### User Knowledge
+
+- Users have basic understanding of cryptocurrency concepts (tokens, blockchain networks, USD conversion)
+
+### API & Data Freshness
+
+- **@funkit/api-base responses remain accurate for at least 30 seconds** — This is why the app uses a 30s `staleTime` in React Query. Price data is cached and considered "fresh" during this window, balancing real-time accuracy with performance.
+
+### Technical Constraints
+
+- **USD as base currency** — All conversions start from USD. No direct token-to-token input (e.g., can't input "1 ETH, show me in BTC")
+
+### Feature Scope (MVP)
+
+- **Static token list** — Supported tokens (USDC, USDT, ETH, WBTC) are hardcoded.
+- **Price comparison only** — This is a price explorer, not an actual swap executor. No wallet connections, no transactions.
+
 ## Trade-offs & Future Improvements
 
 **What I'd add with more time:**
@@ -111,8 +130,8 @@ As features grow, finding related code is trivial. Adding a new token feature me
 - **E2E tests** with Playwright for critical user flows
 - **Optimistic updates** (show calculated values immediately while fetching real prices)
 - **WebSocket connection** for truly real-time prices (currently using on-demand fetching with 30s cache freshness)
-- **Expand token list** for more swap options.
-- **Token search** (currently only 4 tokens, but would scale poorly beyond ~20)
+- **Expand token list** with dynamic discovery from the API
+- **Token search** (currently only 4 tokens, but manual selection would scale poorly beyond ~20)
 
 **Trade-offs made:**
 

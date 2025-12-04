@@ -9,7 +9,7 @@ interface UsdInputProps {
 export const UsdInput = ({ value, onChange }: UsdInputProps) => {
   return (
     <div>
-      <Label htmlFor="usd-amount" className="text-sm font-semibold text-foreground mb-2 block">
+      <Label htmlFor="usd-amount" className="text-sm font-semibold text-muted-foreground mb-2 block">
         USD Amount
       </Label>
       <NumericFormat
@@ -24,7 +24,7 @@ export const UsdInput = ({ value, onChange }: UsdInputProps) => {
         allowNegative={false}
         allowLeadingZeros={false}
         placeholder="0.00"
-        className="flex h-12 w-full rounded-md border-[2px] border-primary/40 bg-muted px-3 py-2 text-lg font-semibold shadow-lg ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground hover:border-primary/70 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
+        className="flex h-12 w-full rounded-md border-[2px] border-primary/40 px-3 py-2 text-foreground/80 font-semibold shadow-lg ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground hover:border-primary/70 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50 transition-all"
       />
     </div>
   )
