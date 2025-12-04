@@ -39,12 +39,22 @@ export default function TokenPriceExplorer() {
   })
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-purple-950 p-4 md:p-8 transition-colors duration-300">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen relative overflow-hidden p-4 md:p-8 transition-colors duration-300">
+      {/* Background Image with Overlay */}
+      <div className="absolute inset-0 z-0">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: 'url(/background3.jpg)' }}
+        />
+        {/* Gradient Overlay for better readability and theme integration */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/40 via-purple-50/30 to-cyan-50/40 dark:from-slate-950/60 dark:via-blue-950/50 dark:to-purple-950/60" />
+      </div>
+
+      <div className="max-w-4xl mx-auto relative z-10">
         <div className="flex justify-end mb-4">
           <ThemeToggle />
         </div>
-        <Card className="border-2 shadow-2xl backdrop-blur-sm bg-card/95 transition-all duration-300">
+        <Card className="border-2 shadow-2xl backdrop-blur-sm bg-card/90 transition-all duration-300">
           <CardContent className="p-6 md:p-8">
             {/* Header */}
             <h1 className="text-3xl md:text-4xl font-bold text-center mb-8 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent animate-in fade-in slide-in-from-top-4 duration-700">
