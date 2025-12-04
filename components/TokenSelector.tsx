@@ -24,7 +24,7 @@ export const TokenSelector = ({
     <Select value={value} onValueChange={onValueChange}>
       <SelectTrigger
         id={id}
-        className="w-[120px] h-8 text-sm font-semibold border-2 border-border bg-muted/30 backdrop-blur-sm shadow-sm hover:border-primary/70 hover:bg-muted/40 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+        className="w-[120px] h-8 text-sm font-semibold border-[2px] border-primary/40 bg-muted! shadow-lg hover:border-primary/70 hover:bg-accent/50 focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
       >
         <SelectValue placeholder="Select token" />
       </SelectTrigger>

@@ -26,7 +26,7 @@ export const UsdInput = ({ value, onChange }: UsdInputProps) => {
         value={value ? formatNumberWithCommas(value) : ''}
         onChange={handleChange}
         placeholder="0.00"
-        className="h-12 text-lg font-semibold bg-background/70 backdrop-blur-sm border-2 hover:border-primary/70 focus-visible:border-primary transition-all duration-200"
+        className="h-12 text-lg font-semibold border-[2px] border-primary/40 bg-muted shadow-lg hover:border-primary/70 hover:bg-accent/50 focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/20 transition-all"
       />
     </div>
   )
