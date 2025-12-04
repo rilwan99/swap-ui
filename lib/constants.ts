@@ -59,7 +59,7 @@ export const DEFAULT_TARGET_TOKEN = "ETH";
 /**
  * API request debounce delay in milliseconds
  */
-export const API_DEBOUNCE_DELAY = 1000;
+export const API_DEBOUNCE_DELAY = 500;
 
 /**
  * Number of decimal places for token amounts

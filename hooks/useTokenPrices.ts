@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { fetchTokenPrice, calculateTokenAmount } from "@/lib/api";
 import {
   TOKENS,
@@ -6,6 +7,7 @@ import {
   TOKEN_AMOUNT_DECIMALS,
 } from "@/lib/constants";
 import type { TokenData } from "@/lib/types";
+import { useDebounce } from "./useDebounce";
 
 interface UseTokenPricesParams {
   usdAmount: string;
@@ -23,6 +25,7 @@ interface UseTokenPricesReturn {
 
 /**
  * Hook to fetch and calculate token prices based on USD input
+ * Uses React Query for caching, automatic retries, and request deduplication
  * Includes debouncing to prevent excessive API calls
  */
 export const useTokenPrices = ({
@@ -30,93 +33,108 @@ export const useTokenPrices = ({
   sourceTokenSymbol,
   targetTokenSymbol,
 }: UseTokenPricesParams): UseTokenPricesReturn => {
-  const [sourceAmount, setSourceAmount] = useState<string>("0");
-  const [targetAmount, setTargetAmount] = useState<string>("0");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
-  const [tokenData, setTokenData] = useState<Record<string, TokenData>>({});
+  // Debounce the USD amount to prevent excessive API calls while user types
+  const debouncedAmount = useDebounce(usdAmount, API_DEBOUNCE_DELAY);
 
-  useEffect(() => {
-    const fetchTokenPrices = async () => {
-      // Only fetch if user has entered an amount
-      if (!usdAmount || parseFloat(usdAmount) <= 0) {
-        setSourceAmount("0");
-        setTargetAmount("0");
-        setTokenData({});
-        return;
+  const numericAmount = parseFloat(debouncedAmount);
+  const isValidAmount = !isNaN(numericAmount) && numericAmount > 0;
+
+  // Find token configurations
+  const sourceToken = TOKENS.find((t) => t.symbol === sourceTokenSymbol);
+  const targetToken = TOKENS.find((t) => t.symbol === targetTokenSymbol);
+
+  // Fetch source token price with React Query
+  const {
+    data: sourceData,
+    isLoading: sourceLoading,
+    error: sourceError,
+  } = useQuery({
+    queryKey: ["tokenPrice", sourceTokenSymbol, sourceToken?.chainId],
+    queryFn: async () => {
+      if (!sourceToken) {
+        throw new Error(`Token configuration not found for ${sourceTokenSymbol}`);
       }
+      return fetchTokenPrice(sourceTokenSymbol, sourceToken.chainId);
+    },
+    enabled: isValidAmount && !!sourceToken,
+    staleTime: 30 * 1000, // Consider data fresh for 30 seconds
+    retry: 2, // Retry failed requests twice
+  });
 
-      setLoading(true);
-      setError("");
-
-      try {
-        const sourceToken = TOKENS.find((t) => t.symbol === sourceTokenSymbol);
-        const targetToken = TOKENS.find((t) => t.symbol === targetTokenSymbol);
-
-        if (!sourceToken || !targetToken) {
-          throw new Error("Token configuration not found");
-        }
-
-        // Fetch both token prices in parallel
-        const [sourceData, targetData] = await Promise.all([
-          fetchTokenPrice(sourceTokenSymbol, sourceToken.chainId),
-          fetchTokenPrice(targetTokenSymbol, targetToken.chainId),
-        ]);
-
-        // Update token data
-        const newTokenData = {
-          [sourceTokenSymbol]: {
-            symbol: sourceTokenSymbol,
-            chainId: sourceToken.chainId,
-            address: sourceData.tokenInfo.address,
-            price: sourceData.tokenPrice.unitPrice,
-          },
-          [targetTokenSymbol]: {
-            symbol: targetTokenSymbol,
-            chainId: targetToken.chainId,
-            address: targetData.tokenInfo.address,
-            price: targetData.tokenPrice.unitPrice,
-          },
-        };
-        setTokenData(newTokenData);
-
-        // Calculate token amounts from USD value
-        const usdValue = parseFloat(usdAmount);
-        const sourceTokenAmount = calculateTokenAmount(
-          usdValue,
-          sourceData.tokenPrice.unitPrice,
-          TOKEN_AMOUNT_DECIMALS
-        );
-        const targetTokenAmount = calculateTokenAmount(
-          usdValue,
-          targetData.tokenPrice.unitPrice,
-          TOKEN_AMOUNT_DECIMALS
-        );
-
-        setSourceAmount(sourceTokenAmount);
-        setTargetAmount(targetTokenAmount);
-      } catch (err) {
-        setError("Failed to fetch token prices. Please try again.");
-        console.error("Error fetching token data:", err);
-        setSourceAmount("0");
-        setTargetAmount("0");
-      } finally {
-        setLoading(false);
+  // Fetch target token price with React Query
+  const {
+    data: targetData,
+    isLoading: targetLoading,
+    error: targetError,
+  } = useQuery({
+    queryKey: ["tokenPrice", targetTokenSymbol, targetToken?.chainId],
+    queryFn: async () => {
+      if (!targetToken) {
+        throw new Error(`Token configuration not found for ${targetTokenSymbol}`);
       }
+      return fetchTokenPrice(targetTokenSymbol, targetToken.chainId);
+    },
+    enabled: isValidAmount && !!targetToken,
+    staleTime: 30 * 1000,
+    retry: 2,
+  });
+
+  // Calculate token amounts and prepare token data
+  const result = useMemo(() => {
+    if (!isValidAmount || !sourceData || !targetData || !sourceToken || !targetToken) {
+      return {
+        sourceAmount: "0",
+        targetAmount: "0",
+        tokenData: {},
+      };
+    }
+
+    const sourcePrice = sourceData.tokenPrice.unitPrice;
+    const targetPrice = targetData.tokenPrice.unitPrice;
+
+    return {
+      sourceAmount: calculateTokenAmount(
+        numericAmount,
+        sourcePrice,
+        TOKEN_AMOUNT_DECIMALS
+      ),
+      targetAmount: calculateTokenAmount(
+        numericAmount,
+        targetPrice,
+        TOKEN_AMOUNT_DECIMALS
+      ),
+      tokenData: {
+        [sourceTokenSymbol]: {
+          symbol: sourceTokenSymbol,
+          chainId: sourceToken.chainId,
+          address: sourceData.tokenInfo.address,
+          price: sourcePrice,
+        },
+        [targetTokenSymbol]: {
+          symbol: targetTokenSymbol,
+          chainId: targetToken.chainId,
+          address: targetData.tokenInfo.address,
+          price: targetPrice,
+        },
+      },
     };
+  }, [
+    isValidAmount,
+    numericAmount,
+    sourceData,
+    targetData,
+    sourceToken,
+    targetToken,
+    sourceTokenSymbol,
+    targetTokenSymbol,
+  ]);
 
-    // Debounce the API call
-    const timeoutId = setTimeout(() => {
-      fetchTokenPrices();
-    }, API_DEBOUNCE_DELAY);
-
-    return () => clearTimeout(timeoutId);
-  }, [usdAmount, sourceTokenSymbol, targetTokenSymbol]);
+  // Combine loading and error states
+  const loading = sourceLoading || targetLoading;
+  const error = sourceError?.message || targetError?.message || "";
 
   return {
-    sourceAmount,
-    targetAmount,
-    tokenData,
+    ...result,
     loading,
     error,
   };
